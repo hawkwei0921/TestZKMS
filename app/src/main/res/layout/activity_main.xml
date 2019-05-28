@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/getPermissions"
+        android:textAllCaps = "false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="getPermissions"
+        android:text="getPermissions" />
+
+    <Button
+        android:id="@+id/bindService"
+        android:textAllCaps = "false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="bindService"
+        android:text="bindService" />
+
+
+    <Button
+        android:id="@+id/init"
+        android:textAllCaps = "false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="init"
+        android:text="init" />
+
+    <Button
+        android:id="@+id/getApiVersion"
+        android:textAllCaps = "false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="getApiVersion"
+        android:text="getApiVersion" />
+
+    <Button
+        android:id="@+id/register"
+        android:textAllCaps = "false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="register"
+        android:text="register" />
+
+    <Button
+        android:id="@+id/createSeed"
+        android:textAllCaps = "false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="createSeed"
+        android:text="createSeed" />
+
+</LinearLayout>

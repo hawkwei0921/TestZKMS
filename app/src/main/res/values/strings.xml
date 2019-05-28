@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">TestZKMS</string>
+    <string name="request_permission_title">Request Permssion</string>
+    <string name="request_permission_content">Tap to enter allow extra permission.</string>
+    <string name="missing_required_permission">You have disabled a required permission.</string>
+</resources>
