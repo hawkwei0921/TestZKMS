@@ -7,12 +7,16 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.hawk.testzkms.permission.TargetActivity;
 import com.htc.wallet.server.IZKMS;
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     long uid;
     String wallet_name = "MyWallet";
     String sha256 = "123456789";
+    Handler mHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +48,29 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    ZKMSConnection mZKMSConnection = new ZKMSConnection();
+    private class ZKMSConnection implements ServiceConnection
+    {
+        public void onServiceConnected(ComponentName name, IBinder binder)
+        {
+            Log.i(TAG,"onServiceConnected");
+            try
+            {
+                mZKMS = IZKMS.Stub.asInterface(binder);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName)
+        {
+            Log.i(TAG,"onServiceDisconnected");
+        }
+    }
+
     public void bindService(View v){
         Intent intent = new Intent();
         intent.setAction("com.htc.wallet.server.ZKMS");
@@ -54,15 +82,36 @@ public class MainActivity extends AppCompatActivity {
             showUpdateDialog(sActivity, "ROM not support ZKMS.");
     }
 
-    public void unbindService(View v){
-        try {
-            MainActivity.this.unbindService(mZKMSConnection);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+    public void demoAPIs(View v){
+        mHandler = new Handler();
+        mHandler.post(apiRunnable);
     }
+
+    final Runnable apiRunnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                if ((ActivityCompat.checkSelfPermission(sActivity, CONSTANT.PERMISSION_ACCESS_ZION) != PackageManager.PERMISSION_GRANTED) ||
+                   (mZKMS == null)) {
+                    Toast.makeText(sActivity,"No ACCESS_ZION permission or bind ZKMS", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                // call ZKMS APIs in background thread
+                // 1. init
+                mPID = android.os.Process.myPid();
+                mZKMS_version = com.htc.wallet.server.BuildConfig.VERSION_NAME;
+                intValue = mZKMS.init(mPID, com.htc.wallet.server.BuildConfig.VERSION_NAME);
+                // 2. getApiVersion
+                mStrApiVersion = mZKMS.getApiVersion();
+                // 3. register
+                uid = mZKMS.register(wallet_name, sha256);
+                // 4. create Seed
+                intValue = mZKMS.createSeed(uid);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     public int init(View v){
         mPID = android.os.Process.myPid();
@@ -116,28 +165,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    ZKMSConnection mZKMSConnection = new ZKMSConnection();
-    private class ZKMSConnection implements ServiceConnection
-    {
-        public void onServiceConnected(ComponentName name, IBinder binder)
-        {
-            Log.i(TAG,"onServiceConnected");
-            try
-            {
-                mZKMS = IZKMS.Stub.asInterface(binder);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+    public void clearSeed(View v){
+        try {
+            intValue = mZKMS.clearSeed(uid);
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName)
-        {
-            Log.i(TAG,"onServiceDisconnected");
-        }
-    };
+    }
 
     public static void showUpdateDialog(final Activity activity, final String prompt) {
         activity.runOnUiThread(new Runnable() {
@@ -162,4 +196,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void unbindService(View v){
+        try {
+            MainActivity.this.unbindService(mZKMSConnection);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 }

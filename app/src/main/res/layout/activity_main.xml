@@ -19,7 +19,19 @@
         android:layout_height="wrap_content"
         android:onClick="bindService"
         android:text="bindService" />
+    <TextView
+        android:background="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="    1. got permission\n    2. bound service\n    3. call APIs below" />
 
+    <Button
+        android:id="@+id/demoAPIs"
+        android:textAllCaps = "false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="demoAPIs"
+        android:text="quick deom API usage" />
 
     <Button
         android:id="@+id/init"
@@ -52,5 +64,14 @@
         android:layout_height="wrap_content"
         android:onClick="createSeed"
         android:text="createSeed" />
+
+    <Button
+        android:id="@+id/clearSeed"
+        android:textAllCaps = "false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="clearSeed"
+        android:text="clearSeed" />
+
 
 </LinearLayout>
