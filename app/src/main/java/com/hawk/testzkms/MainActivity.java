@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.hawk.testzkms.permission.TargetActivity;
 import com.htc.wallet.server.IZKMS;
+import com.htc.wallet.server.PublicKeyHolderParcel;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
-                if ((ActivityCompat.checkSelfPermission(sActivity, CONSTANT.PERMISSION_ACCESS_ZION) != PackageManager.PERMISSION_GRANTED) ||
+                if ((ActivityCompat.checkSelfPermission(sActivity,  "com.htc.wallet.permission.ACCESS_ZION") != PackageManager.PERMISSION_GRANTED) ||
                    (mZKMS == null)) {
                     Toast.makeText(sActivity,"No ACCESS_ZION permission or bind ZKMS", Toast.LENGTH_LONG).show();
                     return;
@@ -106,7 +107,11 @@ public class MainActivity extends AppCompatActivity {
                 // 3. register
                 uid = mZKMS.register(wallet_name, sha256);
                 // 4. create Seed
-                intValue = mZKMS.createSeed(uid);
+                // intValue = mZKMS.createSeed(uid);
+                intValue = mZKMS.restoreSeed(uid);
+                PublicKeyHolderParcel accountxPubKey = mZKMS.getAccountExtPublicKey(uid, 44, 145, 0);
+                PublicKeyHolderParcel bip32xPubKey = mZKMS.getBipExtPublicKey(uid, 44, 145, 0, 0,0);
+                Log.d(TAG, "test end!");
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
