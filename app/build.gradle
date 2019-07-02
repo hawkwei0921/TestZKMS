@@ -27,8 +27,7 @@ repositories {
 
 
 dependencies {
-    // compile(name: 'ZKMSaar-Htc_partner1-release', ext: 'aar') // local AAR file
-    implementation 'com.github.hawkwei0921:ZKMS:3.3.0b' // Remote AAR from Jitpack
+    implementation 'com.github.htczion:ZKMS:3.3.0b' // Remote AAR from Jitpack
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
