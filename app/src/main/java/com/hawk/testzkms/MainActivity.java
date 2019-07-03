@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
     String mApi_Version;
     long uid;
     String m_androidID;
-    String wallet_name = "MyWallet";
-    String sha256 = "123456789";
+    String wallet_name = "com.htc.MyWallet";
+    String sha256;
     Handler mHandler;
     HandlerThread mHandlerThread;
 
