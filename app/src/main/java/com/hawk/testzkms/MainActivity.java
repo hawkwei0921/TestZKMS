@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.hawk.testzkms.permission.TargetActivity;
+import com.htc.wallet.server.ByteArrayHolderParcel;
 import com.htc.wallet.server.IZKMS;
 import com.htc.wallet.server.PublicKeyHolderParcel;
 
@@ -133,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
                     // TODO: call ZKMS APIs, ex: get account xPub Key
                     PublicKeyHolderParcel accountxPubKey = mZKMS.getAccountExtPublicKey(uid, 44, 145, 0);
                     PublicKeyHolderParcel bip32xPubKey = mZKMS.getBipExtPublicKey(uid, 44, 145, 0, 0,0);
+                    String strJson = Utils.GetSampleRawJsonString(sActivity, sActivity.getResources().getIdentifier("bch_jon_mainnet1","raw", sActivity.getPackageName()));
+                    ByteArrayHolderParcel signTransactionByteArrayHolder= new ByteArrayHolderParcel();;
+                    intValue = mZKMS.signTransaction(uid, 145, 0, strJson, signTransactionByteArrayHolder);
                 } else {
                     Toast.makeText(sActivity, "restore or create SEED first!", Toast.LENGTH_LONG).show();
                 }

@@ -1,5 +1,6 @@
 package com.hawk.testzkms;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
@@ -7,6 +8,13 @@ import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -37,5 +45,30 @@ public class Utils {
         }
 
         return false;
+    }
+
+    static public String GetSampleRawJsonString(Activity activity, int resId){
+        InputStream is = activity.getResources().openRawResource(resId);
+        Writer writer = new StringWriter();
+        char[] buffer = new char[1024*1024];
+        try {
+            Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            int n;
+            while ((n = reader.read(buffer)) != -1) {
+                writer.write(buffer, 0, n);
+            }
+        }
+        catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return writer.toString();
     }
 }

@@ -1,0 +1,29 @@
+{
+  "tx_version": "02",
+  "tx_inputs_count": "01",
+  "tx_inputs": [
+    {
+      "path": "m/44'/145'/0'/0/0",
+      "tx_id": "42a9afa7d0be8aa574ba9e5fd27f07c31610469eb86395de6f69386a259d43aa",
+      "tx_index": "00",
+      "scriptSig": "76a914c6ab328b8bd42e6986948b3e0206e2a33c5ff0ee88ac",
+      "sequence": "FEFFFFFF",
+      "amount": "80841e"
+    }
+  ],
+  "tx_outputs_count": "01",
+  "tx_outputs": [
+    {
+      "amount": "40420f",
+      "address": "bitcoincash:qppfx64ss3k5smqj8v8yua28amsysdhdhv5ymjlr64"
+    }
+  ],
+  "tx_changes_count": "01",
+  "tx_changes": [
+    {
+      "path": "m/44'/145'/0'/0/0",
+      "amount": "d63d0f"
+    }
+  ],
+  "lock_time": "0"
+}
