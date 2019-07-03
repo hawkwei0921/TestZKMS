@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,8 +31,9 @@ public class MainActivity extends AppCompatActivity {
     public int mPID;
     int intValue = RESULT.UNKNOWN;
     String mZKMS_version;
-    String mStrApiVersion;
+    String mApi_Version;
     long uid;
+    String m_androidID;
     String wallet_name = "MyWallet";
     String sha256 = "123456789";
     Handler mHandler;
@@ -42,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void getPermissions(View v){
+    public void getPermissions(View v){ // 1. get ACCESS_ZION permission
         Intent intent = new Intent();
         intent.setClass(sActivity, TargetActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void bindService(View v){
+    public void bindService(View v){ // 2. bind ZKMS Service
         Intent intent = new Intent();
         intent.setAction("com.htc.wallet.server.ZKMS");
         intent.setPackage("com.htc.wallet");
@@ -83,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             showUpdateDialog(sActivity, "ROM not support ZKMS.");
     }
 
-    public void demoAPIs(View v){
+    public void demoAPIs(View v){ // 3. call ZKMS APIs in background thread
         mHandler = new Handler();
         mHandler.post(apiRunnable);
     }
@@ -97,20 +99,29 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(sActivity,"No ACCESS_ZION permission or bind ZKMS", Toast.LENGTH_LONG).show();
                     return;
                 }
-                // call ZKMS APIs in background thread
-                // 1. init
+                // 3. call ZKMS APIs in background thread
+                // 3-1. init
                 mPID = android.os.Process.myPid();
                 mZKMS_version = com.htc.wallet.server.BuildConfig.VERSION_NAME;
                 intValue = mZKMS.init(mPID, com.htc.wallet.server.BuildConfig.VERSION_NAME);
-                // 2. getApiVersion
-                mStrApiVersion = mZKMS.getApiVersion();
-                // 3. register
+                // 3-2. getApiVersion
+                mApi_Version = mZKMS.getApiVersion();
+                Log.d(TAG, "mApi_Version="+mApi_Version);
+                // 3-3. register
+                m_androidID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+                sha256 = Utils.StringToSha256String(m_androidID);
                 uid = mZKMS.register(wallet_name, sha256);
-                // 4. create Seed
-                // intValue = mZKMS.createSeed(uid);
-                intValue = mZKMS.restoreSeed(uid);
-                PublicKeyHolderParcel accountxPubKey = mZKMS.getAccountExtPublicKey(uid, 44, 145, 0);
-                PublicKeyHolderParcel bip32xPubKey = mZKMS.getBipExtPublicKey(uid, 44, 145, 0, 0,0);
+                // 3-4. If seed is not created for wallet ever, App should create or restore Seed once.
+                intValue = mZKMS.restoreSeed(uid); // or createSeed
+                // 3-5. Upon Seed existing, most of ZKMS APIs can work normally.
+                if( mZKMS.isSeedExists(uid) == RESULT.SUCCESS ) {
+
+                    // TODO: call ZKMS APIs, ex: get account xPub Key
+                    PublicKeyHolderParcel accountxPubKey = mZKMS.getAccountExtPublicKey(uid, 44, 145, 0);
+                    PublicKeyHolderParcel bip32xPubKey = mZKMS.getBipExtPublicKey(uid, 44, 145, 0, 0,0);
+                } else {
+                    Toast.makeText(sActivity, "restore or create SEED first!", Toast.LENGTH_LONG).show();
+                }
                 Log.d(TAG, "test end!");
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -147,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getApiVersion(View v){
         try {
-            mStrApiVersion = mZKMS.getApiVersion();
+            mApi_Version = mZKMS.getApiVersion();
         } catch (RemoteException e) {
             e.printStackTrace();
         }
