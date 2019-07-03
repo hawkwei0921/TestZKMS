@@ -45,6 +45,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         sActivity = this;
         setContentView(R.layout.activity_main);
+
+        if( Utils.isDeviceSupportHardwareWallet(sActivity) == true )
+            Log.d(TAG, "HW support ZKMS");
+        else {
+            Log.e(TAG, "HW not support ZKMS");
+            Toast.makeText(sActivity,"HW not support ZKMS", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void getPermissions(View v){ // 1. get ACCESS_ZION permission
