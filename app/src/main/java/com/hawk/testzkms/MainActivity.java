@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.provider.Settings;
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     String wallet_name = "MyWallet";
     String sha256 = "123456789";
     Handler mHandler;
+    HandlerThread mHandlerThread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +89,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void demoAPIs(View v){ // 3. call ZKMS APIs in background thread
-        mHandler = new Handler();
+        if( mHandlerThread == null ) {
+            mHandlerThread = new HandlerThread("ZKMS_BackgroundThread");
+        }
+        mHandlerThread.start();
+        mHandler = new Handler(mHandlerThread.getLooper());
         mHandler.post(apiRunnable);
     }
 
